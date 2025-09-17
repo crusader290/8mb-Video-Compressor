@@ -11,25 +11,53 @@ basename="${input%.*}"
 echo "Input file: $input"
 
 # --- Get duration in seconds using ffprobe ---
-duration=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$input")
-duration=${duration%.*} # round to integer
+duration=$(ffprobe -v error -show_entries format=duration \
+          -of default=noprint_wrappers=1:nokey=1 "$input")
+
+# Round duration to integer
+duration=${duration%.*}
+[ -z "$duration" ] && duration=1
+[ "$duration" -lt 1 ] && duration=1
 
 echo "Duration: $duration seconds"
 
 # --- Calculate target bitrate (video+audio) in kbps ---
-# 8 MB = 8192 KB -> 8192*8 = 65536 kilobits
-total_bitrate=$((65536 / duration))
+total_bitrate=$((63500 / duration))
+[ "$total_bitrate" -lt 50 ] && total_bitrate=50
 
 # Allocate ~90% to video, 10% to audio
 video_bitrate=$((total_bitrate * 9 / 10))
 audio_bitrate=$((total_bitrate - video_bitrate))
 
+[ "$video_bitrate" -lt 50 ] && video_bitrate=50
+[ "$audio_bitrate" -lt 16 ] && audio_bitrate=16
+
 echo "Target total bitrate: ${total_bitrate} kbps"
 echo "Video bitrate: ${video_bitrate} kbps"
 echo "Audio bitrate: ${audio_bitrate} kbps"
 
-# --- Run two-pass encode ---
-ffmpeg -y -i "$input" -c:v libvpx-vp9 -b:v ${video_bitrate}k -pass 1 -an -f null /dev/null
-ffmpeg -y -i "$input" -c:v libvpx-vp9 -b:v ${video_bitrate}k -pass 2 -c:a libopus -b:a ${audio_bitrate}k "${basename}_discord.webm"
+# --- Adaptive resolution based on bitrate ---
+scale_filter=""
+if [ "$video_bitrate" -lt 600 ]; then
+  echo "Bitrate very low, downscaling to 360p..."
+  scale_filter="-vf scale=-1:360"
+elif [ "$video_bitrate" -lt 1200 ]; then
+  echo "Bitrate low, downscaling to 480p..."
+  scale_filter="-vf scale=-1:480"
+else
+  echo "Bitrate sufficient, keeping original resolution."
+fi
+
+# --- Run two-pass encode with hard size cap ---
+ffmpeg -hide_banner -loglevel warning -y -i "$input" \
+  -c:v libvpx-vp9 -b:v ${video_bitrate}k $scale_filter \
+  -pass 1 -an -f null /dev/null
+
+ffmpeg -hide_banner -loglevel warning -y -i "$input" \
+  -c:v libvpx-vp9 -b:v ${video_bitrate}k $scale_filter \
+  -pass 2 -c:a libopus -b:a ${audio_bitrate}k -fs 8M "${basename}_discord.webm"
+
+# --- Cleanup temp files ---
+rm -f ffmpeg2pass-0.log ffmpeg2pass-0.log.mbtree
 
 echo "✅ Done! Output saved as ${basename}_discord.webm"
