@@ -15,25 +15,27 @@ maximum compatibility and efficiency.
 
 ------------------------------------------------------------------------
 
-## 🚀 Usage
+### 🐧 Linux / macOS
 
-### Linux / macOS
-
-Pending Change.
+1. Save the script as `compress_webm.sh`.
+2. Make it executable:
+   ```bash
+   chmod +x compress_webm.sh
+   ```
+3. Run the script from terminal with your video file as an argument:
+   ```bash
+   ./compress_webm.sh myvideo.mp4
+   ```
+4. The compressed file will be saved as `myvideo_discord.webm` in the same folder.
 
 ------------------------------------------------------------------------
 
 ### 🪟 Windows (Drag & Drop)
 
-Drag & drop your video onto the .bat.
-
-The script runs ffprobe to detect the video duration.
-
-It calculates the exact bitrate budget so the final file ≤ 8 MB.
-
-FFmpeg does a 2-pass encode for better quality.
-
-Output: video_discord.webm in the same folder.
+1. Save the script as `compress_webm_dragdrop.bat`.
+2. Place the `.bat` file in the same folder as `ffmpeg.exe` and `ffprobe.exe` (or make sure FFmpeg is added to your PATH).
+3. Drag and drop a video file onto the `.bat`.
+4. The script will automatically compress it and save the output as `yourvideo_discord.webm` in the same folder.
 
 ------------------------------------------------------------------------
 
