@@ -38,10 +38,10 @@ echo Audio bitrate: %audio_bitrate% kbps
 
 rem --- Adaptive resolution based on bitrate ---
 set scale_filter=
-if %video_bitrate% LSS 600 (
+if %video_bitrate% LSS 400 (
     echo Bitrate very low, downscaling to 360p...
     set scale_filter=-vf scale=-1:360
-) else if %video_bitrate% LSS 1200 (
+) else if %video_bitrate% LSS 900 (
     echo Bitrate low, downscaling to 480p...
     set scale_filter=-vf scale=-1:480
 ) else (
