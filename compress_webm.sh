@@ -38,10 +38,10 @@ echo "Audio bitrate: ${audio_bitrate} kbps"
 
 # --- Adaptive resolution based on bitrate ---
 scale_filter=""
-if [ "$video_bitrate" -lt 600 ]; then
+if [ "$video_bitrate" -lt 400 ]; then
   echo "Bitrate very low, downscaling to 360p..."
   scale_filter="-vf scale=-1:360"
-elif [ "$video_bitrate" -lt 1200 ]; then
+elif [ "$video_bitrate" -lt 900 ]; then
   echo "Bitrate low, downscaling to 480p..."
   scale_filter="-vf scale=-1:480"
 else
