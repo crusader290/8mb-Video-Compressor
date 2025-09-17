@@ -38,12 +38,15 @@ maximum compatibility and efficiency.
 
 ------------------------------------------------------------------------
 
-### Windows
+### 🪟 Windows (Drag & Drop)
 
-1.  Save the script as `compress_webm.bat`.
-2.  Double-click the `.bat` file or run it from `cmd`.
-3.  Enter your video filename when prompted (e.g. `video.mp4`).\
-    The compressed file will be saved as `video_discord.webm`.
+Save the script as compress_webm_dragdrop.bat.
+
+Place the .bat file in the same folder as ffmpeg.exe (or make sure FFmpeg is added to your PATH).
+
+Drag and drop a video file onto the .bat.
+
+The script will automatically compress it and save the output as yourvideo_discord.webm in the same folder.
 
 ------------------------------------------------------------------------
 
