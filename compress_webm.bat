@@ -21,18 +21,15 @@ if %duration% LSS 1 set duration=1
 
 echo Duration: %duration% seconds
 
-rem --- Calculate target bitrate (video+audio) in kbps ---
-set /a total_bitrate=63500/%duration%
-if %total_bitrate% LSS 50 set /a total_bitrate=50
-
-rem Allocate ~90%% to video, 10%% to audio
-set /a video_bitrate=%total_bitrate%*9/10
-set /a audio_bitrate=%total_bitrate%-%video_bitrate%
-
+rem --- Calculate target video bitrate (kbps) ---
+rem 8 MB = 8192 KB -> 8192*8 = 65536 kilobits
+rem Apply ~3%% margin -> 63500 instead of 65536
+rem Subtract 128 kbps reserved for audio
+set /a video_bitrate=(63500/%duration%)-128
 if %video_bitrate% LSS 50 set /a video_bitrate=50
-if %audio_bitrate% LSS 16 set /a audio_bitrate=16
 
-echo Target total bitrate: %total_bitrate% kbps
+set audio_bitrate=128
+
 echo Video bitrate: %video_bitrate% kbps
 echo Audio bitrate: %audio_bitrate% kbps
 
