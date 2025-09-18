@@ -11,7 +11,8 @@ It uses **two-pass VP9 encoding** with smart bitrate calculation, adaptive resol
 - ✅ Adaptive resolution scaling:
   - ≥900 kbps → Keep original resolution.  
   - 400–889 kbps → Downscale to **480p**.  
-  - <400 kbps → Downscale to **360p**.  
+  - <400 kbps → Downscale to **360p**.
+- ✅ Audio clamped at 128kbps.
 - ✅ Two-pass encoding for higher quality.  
 - ✅ Hard cap (`-fs 8M`) ensures files never exceed Discord’s 8 MB limit.  
 - ✅ Temporary FFmpeg log files are cleaned up automatically.  
