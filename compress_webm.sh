@@ -21,18 +21,15 @@ duration=${duration%.*}
 
 echo "Duration: $duration seconds"
 
-# --- Calculate target bitrate (video+audio) in kbps ---
-total_bitrate=$((63500 / duration))
-[ "$total_bitrate" -lt 50 ] && total_bitrate=50
-
-# Allocate ~90% to video, 10% to audio
-video_bitrate=$((total_bitrate * 9 / 10))
-audio_bitrate=$((total_bitrate - video_bitrate))
-
+# --- Calculate target video bitrate (kbps) ---
+# 8 MB = 8192 KB -> 8192*8 = 65536 kilobits
+# Apply ~3% margin -> 63500 instead of 65536
+# Subtract 128 kbps reserved for audio
+video_bitrate=$((63500 / duration - 128))
 [ "$video_bitrate" -lt 50 ] && video_bitrate=50
-[ "$audio_bitrate" -lt 16 ] && audio_bitrate=16
 
-echo "Target total bitrate: ${total_bitrate} kbps"
+audio_bitrate=128
+
 echo "Video bitrate: ${video_bitrate} kbps"
 echo "Audio bitrate: ${audio_bitrate} kbps"
 
